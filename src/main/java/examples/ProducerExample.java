@@ -1,5 +1,6 @@
 package examples;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,15 +25,16 @@ public class ProducerExample {
 
     String[] users = { "eabara", "jsmith", "sgarcia", "jbernard", "htanaka", "awalther" };
     String[] items = { "book", "alarm clock", "t-shirts", "gift card", "batteries" };
-    Producer<String, String> producer = new KafkaProducer<>(props);
+    Producer<String, UserItem> producer = new KafkaProducer<>(props);
 
     final Long numMessages = 10L;
     for (Long i = 0L; i < numMessages; i++) {
       Random rnd = new Random();
       String user = users[rnd.nextInt(users.length)];
       String item = items[rnd.nextInt(items.length)];
+      UserItem userItem = new UserItem(user, item);
 
-      ProducerRecord<String, String> record = new ProducerRecord<>(topic, user, item);
+      ProducerRecord<String, UserItem> record = new ProducerRecord<>(topic, user, userItem);
       producer.send(
             record,
             (event, ex) -> {

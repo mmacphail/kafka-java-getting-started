@@ -24,7 +24,7 @@ public class ConsumerExample {
 
     // Add additional properties.
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "kafka-java-getting-started");
-    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
     //props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
@@ -44,15 +44,15 @@ public class ConsumerExample {
     //props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
     // Add additional required properties for this consumer app
-    final Consumer<String, String> consumer = new KafkaConsumer<>(props);
+    final Consumer<String, UserItem> consumer = new KafkaConsumer<>(props);
     consumer.subscribe(Arrays.asList(topic));
 
     try {
       while (true) {
-        ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
-        for (ConsumerRecord<String, String> record : records) {
+        ConsumerRecords<String, UserItem> records = consumer.poll(Duration.ofMillis(100));
+        for (ConsumerRecord<String, UserItem> record : records) {
           String key = record.key();
-          String value = record.value();
+          UserItem value = record.value();
           System.out.println(
                 String.format("Consumed event from topic %s: key = %-10s value = %s", topic, key, value));
         }
