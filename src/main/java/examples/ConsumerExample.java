@@ -1,5 +1,6 @@
 package examples;
 
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
@@ -28,6 +29,9 @@ public class ConsumerExample {
     props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 10);
     //props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+    // specific to avro
+    props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+
 
     // Dans Kafka
     // topic __consumer_offsets (group.id kafka-java-getting-started, purchases, partition 0, 50)
@@ -44,15 +48,15 @@ public class ConsumerExample {
     //props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
     // Add additional required properties for this consumer app
-    final Consumer<String, UserItem> consumer = new KafkaConsumer<>(props);
+    final Consumer<String, User> consumer = new KafkaConsumer<>(props);
     consumer.subscribe(Arrays.asList(topic));
 
     try {
       while (true) {
-        ConsumerRecords<String, UserItem> records = consumer.poll(Duration.ofMillis(100));
-        for (ConsumerRecord<String, UserItem> record : records) {
+        ConsumerRecords<String, User> records = consumer.poll(Duration.ofMillis(100));
+        for (ConsumerRecord<String, User> record : records) {
           String key = record.key();
-          UserItem value = record.value();
+          User value = record.value();
           System.out.println(
                 String.format("Consumed event from topic %s: key = %-10s value = %s", topic, key, value));
         }
